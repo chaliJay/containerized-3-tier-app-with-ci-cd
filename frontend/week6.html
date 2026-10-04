@@ -57,6 +57,34 @@
         </ul>
         
         <h2>Part B</h2>
+        <p>I used the same app as in week 5. This week I added two things: a pipeline that deploys the app on every push, and health checks and logs so I can see if the app works.</p>
+
+        <h3>1. The CI/CD pipeline</h3>
+        <p>With week5 I deployed every change by hand. I built the image, pushed it to Docker Hub, ran oc set image and waited. 
+            Now GitHub Actions does the same steps on every push to main.</p>
+        <p>I created a GitHub Actions workflow at .github/workflows/backend-cicd.yml. and .github/workflows/frontend-cicd.yml. 
+            The workflow is triggered whenever code is pushed to the main branch. 
+            The pipeline checks out the repository, logs into Docker Hub using GitHub repository secrets, builds the backend amd frontend Docker image, tags it with the Git commit SHA, pushes it to Docker Hub, installs the OpenShift CLI, logs into Rahti, updates the backend Deployment using oc set image, and waits for the rollout to complete.</p>
+        <p>The credentials are stored as GitHub repository secrets:
+            <ul>
+                <p>DOCKERHUB_USERNAME</p>
+                <p>DOCKERHUB_TOKEN</p>
+                <p>RAHTI_SERVER</p>
+                <p>RAHTI_TOKEN</p>
+            </ul>  
+        </p>
+        <img src="" alt="secrets"></img>
+        <img src="" alt="git_builds"></img>
+
+        <h3>2. Evidence of CI/CD-Triggered Deployment</h3>
+        <h4>2.1. Verifying Deployment via Pod Image Digest</h4>
+        <p>When a new Docker image is pushed to Docker Hub, Rahti automatically pulls the updated image during the next deployment. The oc get pods -o wide command displays the image digest used by each running pod.</p>
+        <p>I ran oc get pods -o wide command before pushing the commit</p>    
+        <p>Below is the screenshot before making the new commit</p>
+        <img>
+        <p>Before pushing the commit, the backend and frontend pods had an age of 39 minutes, indicating the last deployment occurred earlier.</p>
+        <p>Then I make a commit and get the screenshot of same command after the commit as below</p>
+        <img>
     </div>
     
 </body>
