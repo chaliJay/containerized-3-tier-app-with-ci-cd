@@ -1,7 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import os
 import mysql.connector
 import redis
+import time
 import logging
 
 app = Flask(__name__)
