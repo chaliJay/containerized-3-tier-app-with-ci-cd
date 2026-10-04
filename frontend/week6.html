@@ -73,18 +73,33 @@
                 <p>RAHTI_TOKEN</p>
             </ul>  
         </p>
-        <img src="" alt="secrets"></img>
-        <img src="" alt="git_builds"></img>
+        <img src="https://a3s.fi/swift/v1/Assignment%206/secrets.png" alt="secrets"></img>
+        <img src="https://a3s.fi/swift/v1/Assignment%206/actions.png" alt="actions"></img>
 
         <h3>2. Evidence of CI/CD-Triggered Deployment</h3>
         <h4>2.1. Verifying Deployment via Pod Image Digest</h4>
         <p>When a new Docker image is pushed to Docker Hub, Rahti automatically pulls the updated image during the next deployment. The oc get pods -o wide command displays the image digest used by each running pod.</p>
         <p>I ran oc get pods -o wide command before pushing the commit</p>    
         <p>Below is the screenshot before making the new commit</p>
-        <img>
+        <img src="https://a3s.fi/swift/v1/Assignment%206/get_pods_before.png" alt="before_commit">
         <p>Before pushing the commit, the backend and frontend pods had an age of 39 minutes, indicating the last deployment occurred earlier.</p>
         <p>Then I make a commit and get the screenshot of same command after the commit as below</p>
-        <img>
+        <img src="https://a3s.fi/swift/v1/Assignment%206/get_pods_after.png" alt="after_commit">
+        <p>After the commit, the backend and frontend pods were recreated, showing a new age (e.g., age is in seconds). This confirms that Rahti pulled the newly built image and performed a fresh deployment triggered by the CI/CD pipeline.</p>
+        <img src="https://a3s.fi/swift/v1/Assignment%206/git_real_build.png" alt="github_real_ci_cd_build_proof">
+
+
+        <h3>2. Health Check</h3>
+        <p>Added two health endpoints to the Flask backend.</p>
+        <p>The liveness endpoint is /healthz and returns a status of healthy. It is used by OpenShift to determine whether the backend container is alive.</p>
+        <p>The readiness endpoint is /readyz. It attempts to connect to MySQL. If the connection succeeds, it returns HTTP 200. If the database connection fails, it returns HTTP 503. This makes the readiness check dependent on an important backend dependency</p>
+
+        <h3>3. Probe configuration</h3>
+        <h3>4. Readiness Probe Isolation</h3>
+        <h3>5. Structured Backend Logging</h3>
+        <h3>6. Retrieving Logs from Rahti</h3>
+        <h3>7. Example Alert</h3>
+        <h3>8. Problems and Solutions</h3>
     </div>
     
 </body>
