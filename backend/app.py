@@ -2,8 +2,30 @@ from flask import Flask, jsonify
 import os
 import mysql.connector
 import redis
+import logging
 
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+logger = logging.getLogger(__name__)
+
+@app.before_request
+def start_timer():
+    request.start_time = time.time()
+
+@app.after_request
+def log_request(response):
+    duration = time.time() - request.start_time
+
+    logger.info(
+        "request path=%s method=%s status=%s duration_ms=%.2f",
+        request.path,
+        request.method,
+        response.status_code,
+        duration * 1000,
+    )
+
+    return response
 
 DB_HOST = os.getenv('DB_HOST','db')
 DB_USER = os.getenv('DB_USER', 'appuser')
@@ -16,6 +38,20 @@ r = redis.Redis(host=os.environ.get("REDIS_HOST", "cache"), port=6379, decode_re
 def health():
       return jsonify(status='ok')
 
+@app.get("/healthz")
+def healthz():
+    return jsonify({"status": "healthy"}), 200
+
+
+@app.get("/readyz")
+def readyz():
+    try:
+        conn = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME)
+        conn.close()
+        return {"status": "ready"}, 200
+    except Exception:
+        return {"status": "not ready"}, 503
+    
 @app.get('/api/visits')
 def visits():
     count = r.incr('page_views')
