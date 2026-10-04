@@ -95,11 +95,26 @@
         <p>The readiness endpoint is /readyz. It attempts to connect to MySQL. If the connection succeeds, it returns HTTP 200. If the database connection fails, it returns HTTP 503. This makes the readiness check dependent on an important backend dependency</p>
 
         <h3>3. Probe configuration</h3>
-        <h3>4. Readiness Probe Isolation</h3>
-        <h3>5. Structured Backend Logging</h3>
-        <h3>6. Retrieving Logs from Rahti</h3>
+        <p>The backend Deployment contains these probes</p>
+        <img src="https://a3s.fi/swift/v1/Assignment%206/prob_config.png" alt="prob_config">
+
+        <h3>4. Breaking the readiness prob on purpose</h3>
+        <p>Changing the readiness probe path to /wrong-path causes health checks to fail. OpenShift marks the pod as 0/1 READY.</p>
+        <img src="https://a3s.fi/swift/v1/Assignment%206/fail_rediness.png" alt="fail_rediness">
+
+        <h3>5. Backend Logging</h3>
+        <p>Viewing live backend logs using oc logs deployment/backend demonstrates formatted HTTP request tracking.These entries make it easier to understand which requests are being handled and how long they take.</p>
+        <img src="https://a3s.fi/swift/v1/Assignment%206/logs.png" alt="backend_logs">
+
         <h3>7. Example Alert</h3>
+        <p>In a real production environment, alerting directly on every readiness probe failure would create noise and lead to alert fatigue. Instead, a meaningful alert would focus on user‑impacting symptoms, such as the service losing all healthy endpoints.
+            A realistic alert rule might be:</p>
+        <p><strong>Trigger an alert if the number of Ready pods in the backend Deployment drops below 1 for more than 2 minutes.</strong></p>
+        <p>This avoids false alarms from brief probe failures and ensures alerts only fire when the service is genuinely unable to serve traffic.</p>
+
         <h3>8. Problems and Solutions</h3>
+        <p>Problem : Docker login failed during the pipeline run.</p>
+        <p>Solution : The Docker Hub token was incorrectly added with the wrong name.Re‑added secrets under: Settings → Secrets and variables → Actions and referenced them correctly solve the problem</p>
     </div>
     
 </body>
