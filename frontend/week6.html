@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Lab</title>
+</head>
+<style></style>
+<body>
+    <h1>Weeek 6 Assignment</h1>
+    <div>
+        <h2>3-tier Application Test with CI CD</h2>
+
+        <h2>Documentatino of Work</h2>
+        <h2>Part A : Answers to Questions</h2>
+
+        <h3>Q1 : Explain the difference between Continuous Integration, Continuous Delivery and Continuous Deployment.</h3>
+        <p>Continuous Integration (CI), Continuous Delivery (CD), and Continuous Deployment (also abbreviated CD) are closely related practices in modern software engineering, but they focus on different stages of the path from source code to running software in production. Continuous Integration is the foundation: developers frequently merge their changes into a shared main branch, and every change triggers an automated process that compiles the code, runs unit and integration tests, and performs static checks such as linting or style validation. The goal is to detect integration problems as early as possible, keep the main branch always buildable, and reduce the pain of “big bang” merges where many changes collide at once. When CI is done well, broken builds are treated as urgent issues, and developers aim to keep the pipeline green so that the codebase is always in a healthy state.</p>
+        <p>Continuous Delivery builds directly on CI. Once the code has passed all CI checks, Continuous Delivery adds automated steps that package the application (for example, creating a Docker image or a deployable artifact), run additional tests (such as end‑to‑end or acceptance tests), and push the result to a location from which it can be deployed—such as a container registry or a staging environment. The key idea is that the software is always in a releasable state: at any moment, a human decision-maker (such as a product owner or operations engineer) can choose to deploy the latest successful build to production. Deployment itself is usually triggered manually (for example, clicking a button or running a release command), but everything up to that point is automated and repeatable. This reduces release risk, shortens lead time, and makes small, frequent releases possible instead of rare, large ones.</p>
+        <p>Continuous Deployment takes automation one step further. Here, every change that successfully passes through the CI and CD pipeline is automatically deployed to production without a manual approval step. In other words, the deployment trigger is the pipeline itself: once tests and quality gates are satisfied, the system promotes the new version directly to live users. This practice maximizes delivery speed and feedback: developers can see the impact of their changes in real usage very quickly, and users receive improvements continuously rather than waiting for scheduled releases. However, Continuous Deployment requires a very high level of confidence in automated tests, monitoring, and rollback strategies, because any flaw that escapes the pipeline can reach production rapidly. Teams often combine Continuous Deployment with techniques like feature flags, canary releases, and blue-green deployments to reduce risk while keeping the flow of changes fast.</p>
+        <p>The three practices form a progression. CI ensures that code changes integrate cleanly and that the main branch remains stable. Continuous Delivery ensures that every integrated change is automatically built, tested, and packaged so that it is always ready to be released, even if the actual release is a business decision. Continuous Deployment removes that final manual gate and turns successful pipeline runs into automatic production releases. In practice, many teams adopt CI first, then move to Continuous Delivery, and only adopt Continuous Deployment when their test coverage, automation, and operational maturity are strong enough to support fully automated releases.</p>
+        
+        <p>References</p>
+        <ul>
+            <li><a href="https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment">Continuous integration vs. delivery vs. deployment</a></li>
+            <li><a href="https://www.redhat.com/en/topics/devops/what-is-ci-cd">What is CI/CD?</a></li>
+            <li><a href="https://aws.amazon.com/devops/continuous-delivery/">What is Continuous Delivery?</a></li>
+        </ul>
+
+
+        <h3>Q2 : Why should secrets (registry tokens, cluster login tokens) never be hard-coded into a CI/CD pipeline file? How does GitHub Actions handle this instead?</h3>
+        <p>Secrets such as registry tokens, API keys, and cluster login credentials should never be hard-coded into a CI/CD pipeline file because doing so exposes them to anyone who can access the repository, including its history, forks, and logs. Pipeline files are stored in version control, meaning a leaked secret remains permanently visible in past commits even if later removed. Hard-coded secrets can also accidentally appear in build logs or be accessed by contributors through pull requests, creating a serious security risk that could allow attackers to push malicious images, access private infrastructure, or compromise production systems. To prevent this, GitHub Actions provides an encrypted secrets management system where sensitive values are stored securely in the repository's Secrets section rather than in the workflow file. These secrets are injected into workflows at runtime through the secrets context, allowing the pipeline to use them without ever exposing the actual values. GitHub also masks secrets in logs and restricts their availability to trusted workflows, ensuring that sensitive credentials remain protected while still enabling automated CI/CD processes.</p>
+        <p>References</p>
+        <ul>
+            <li><a href="https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets">Using secrets in GitHub Actions</a></li>
+            <li><a href="https://docs.github.com/en/actions/reference/security/secure-use">Secure use reference</a></li>
+        </ul>
+
+        <h3>Q3 : What is alert fatigue, and how would you design a small set of alerts for a student project that avoids it?</h3>
+        <p>Alert fatigue is the desensitisation that happens when people receive too many alerts, especially low-value or noisy ones, causing them to ignore or miss the alerts that actually matter. In DevOps and SRE contexts, alert fatigue occurs when on‑call engineers are bombarded with excessive or poorly prioritised notifications, leading to slower responses, missed incidents, and burnout. This happens because humans naturally tune out signals that fire too often or without clear actionability. Research describes alert fatigue as a psychological and operational failure mode: when most alerts are noise, responders stop reacting with full attention, even when a critical alert arrives . It is caused by issues such as threshold-based alerting that fires on arbitrary metrics, lack of severity tiering, no deduplication or correlation, and alerts without runbooks or clear meaning. Excessive or irrelevant alerts degrade the signal-to-noise ratio, making it harder for responders to detect real problems, increasing downtime and reducing system reliability </p>
+        <p>For a student project, the goal is not to create a full enterprise-grade alerting system but to design a minimal, high-signal set of alerts that avoids fatigue entirely. The key is to alert only on symptoms that matter, not on every metric fluctuation. A good student-level design would include:</p>
+        <ul>
+            <li><p>One availability alert - e.g., “Service is down or returns 5xx errors for more than 1 minute.” This aligns with symptom-based alerting recommended in SRE practices, where alerts should fire only when users are impacted rather than when internal metrics cross arbitrary thresholds </p></li>
+            <li><p>One performance alert - e.g., “API latency exceeds X ms for sustained period.” This should be tied to user experience, not momentary spikes.</p></li>
+            <li><p>One resource exhaustion alert - e.g., “Disk or memory usage above 90% for 10 minutes.” This prevents silent failures but avoids flapping by requiring sustained breach.</p></li>
+            <li><p>No informational alerts - warnings should go to dashboards, not notifications.</p></li>
+            <li><p>Clear severity levels - only true P1 alerts should notify; everything else becomes a ticket. This follows best-practice severity tiering where only immediate customer-impacting issues trigger a page </p></li>
+        </ul> 
+        <p>By keeping the alert set small, actionable, and tied to real user impact, a student project avoids the core causes of alert fatigue: noise, flapping alerts, and unclear priorities. This mirrors industry guidance that effective alerting requires high signal-to-noise ratio, symptom-based triggers, and strict prioritisation to prevent desensitisation and missed incidents .</p>
+
+        <h3>Q4 : What are the three pillars of observability (metrics, logs, traces)? Give an example of a question each one is best suited to answer.</h3>
+        <p>The three pillars of observability—metrics, logs, and traces—each provide a different type of insight into how a system behaves, and each is best suited to answering a specific kind of question. Metrics are numerical measurements collected over time, such as request latency, error rate, or CPU usage. They are ideal for identifying what is happening at a high level and spotting trends or anomalies. A question metrics answer well is: “Is my service performing within normal limits?”, for example noticing that average latency has suddenly doubled. Logs are detailed, timestamped records of events inside the system, capturing errors, warnings, and contextual information. Logs help answer “What exactly happened?”, such as discovering that a database query failed due to a timeout. Traces follow a single request as it moves through different components or microservices, showing how long each step took. They are best suited to answering “Where is the bottleneck?”, for example revealing that most of the request time is spent waiting on an external API. Together, these three pillars allow developers to detect issues, understand their causes, and pinpoint where they occur.</p>
+        <p>References</p>
+        <ul>
+            <li><a href="https://www.elastic.co/observability/infrastructure-monitoring">Infrastructure monitoring built for high-cardinality efficiency at scale</a></li>
+            <li><a href="https://docs.cloud.google.com/stackdriver/docs">Observability in Google Cloud</a></li>
+        </ul>
+        
+        <h2>Part B</h2>
+    </div>
+    
+</body>
+</html>
