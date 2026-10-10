@@ -29,6 +29,7 @@ The project also includes Kubernetes readiness probes, basic observability pract
 
 
 # CI/CD Pipeline
+
 The GitHub Actions workflow:
 
 1. Checks out repository code
